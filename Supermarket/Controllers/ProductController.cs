@@ -1,50 +1,84 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Supermarket.Models;
 
 namespace Supermarket.Controllers
 {
     public class ProductController : Controller
     {
-        List<Product> products = new()
+        static List<Product> products = new()
         {
-            new Product { id = 1, name = "Maçã", price = 3.50M },
-            new Product { id = 2, name = "Banana", price = 2.20M },
-            new Product { id = 3, name = "Laranja", price = 4.00M }
+            new Product { id = 1, name = "Maçã", price = 3.50 },
+            new Product { id = 2, name = "Banana", price = 2.20 },
+            new Product { id = 3, name = "Laranja", price = 4.00 }
         };
-        public IActionResult list()
+        public IActionResult List()
         {
-            string html = "<h1>Lista de Produtos</h1><ul>";
-            foreach (var product in products)
-            {
-                html += $"<li><a href=products/{product.id}>{product.name} </a> - $ {product.price}</li>";
-            }
-            html += "</ul>";
-            return Content(html, "text/html");
-
+           return View(products);
         }
 
-        [Route("products/{id}")]
-        public IActionResult details(int id)
+        public IActionResult Detail(int id)
         {
             var product = products.Find(p => p.id == id);
             if (product == null)
             {
-                return NotFound("<h1>Produto não encontrado</h1>");
+                return View("NotFound");
             }
-            string html = $"<h1>Detalhes do Produto</h1><p>Nome: {product.name}</p><p>Preço: $ {product.price}</p>";
-            return Content(html, "text/html");
+            return View(product);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var product = products.Find(p => p.id == id);
+            if (product == null)
+            {
+                return View("NotFound");
+            }
+            return View(product);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Product updated_product)
+        {
+            var product = products.Find(p => p.id == updated_product.id);
+            if (product == null)
+            {
+                return View("NotFound");
+            }
+            product.name = updated_product.name;
+            product.price = updated_product.price;
+            return RedirectToAction("List");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var product = products.Find(p => p.id == id);
+            if (product == null)
+            {
+                return View("NotFound");
+            }
+            products.Remove(product);
+            return RedirectToAction("List");
+        }
+
+
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Create(Product new_product)
+        {
+            if(new_product == null)
+                return View("NotFound");
+            products.Add(new_product);
+            return RedirectToAction("List");
         }
 
         [Route("products/json")]
         public IActionResult listJSON()
         {
             return Json(products);
-        }
-
-        public class Product
-        {
-            public int id { get; set; }
-            public string name { get; set; }
-            public decimal price { get; set; }
         }
     }
 }
