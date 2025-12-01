@@ -2,13 +2,13 @@
 
 namespace Supermarket.Controllers
 {
-    public class Product : Controller
+    public class ProductController : Controller
     {
-        private static readonly List<ProductModel> products = new()
+        List<Product> products = new()
         {
-            new ProductModel { id = 1, name = "Maçã", price = 3.50M },
-            new ProductModel { id = 2, name = "Banana", price = 2.20M },
-            new ProductModel { id = 3, name = "Laranja", price = 4.00M }
+            new Product { id = 1, name = "Maçã", price = 3.50M },
+            new Product { id = 2, name = "Banana", price = 2.20M },
+            new Product { id = 3, name = "Laranja", price = 4.00M }
         };
         public IActionResult list()
         {
@@ -40,7 +40,7 @@ namespace Supermarket.Controllers
             return Json(products);
         }
 
-        public class ProductModel
+        public class Product
         {
             public int id { get; set; }
             public string name { get; set; }
