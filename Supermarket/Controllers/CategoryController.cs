@@ -10,23 +10,21 @@ using Supermarket.Models;
 
 namespace Supermarket.Controllers
 {
-    public class ProductController : Controller
+    public class CategoryController : Controller
     {
         private readonly SupermarketContext _context;
 
-        public ProductController(SupermarketContext context)
+        public CategoryController(SupermarketContext context)
         {
             _context = context;
         }
 
-        // GET: Product
         public async Task<IActionResult> Index()
         {
-            var supermarketContext = _context.ProductModel.Include(p => p.Category);
-            return View(await supermarketContext.ToListAsync());
+            return View(await _context.CategoryModel.ToListAsync());
         }
 
-        // GET: Product/Details/5
+        // GET: CategoryModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,42 +32,39 @@ namespace Supermarket.Controllers
                 return NotFound();
             }
 
-            var productModel = await _context.ProductModel
-                .Include(p => p.Category)
+            var categoryModel = await _context.CategoryModel
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (productModel == null)
+            if (categoryModel == null)
             {
                 return NotFound();
             }
 
-            return View(productModel);
+            return View(categoryModel);
         }
 
-        // GET: Product/Create
+        // GET: CategoryModels/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id");
             return View();
         }
 
-        // POST: Product/Create
+        // POST: CategoryModels/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Price,Description,LastUpdateDate,CategoryId")] ProductModel productModel)
+        public async Task<IActionResult> Create([Bind("Id,Title")] CategoryModel categoryModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(productModel);
+                _context.Add(categoryModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id", productModel.CategoryId);
-            return View(productModel);
+            return View(categoryModel);
         }
 
-        // GET: Product/Edit/5
+        // GET: CategoryModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,23 +72,22 @@ namespace Supermarket.Controllers
                 return NotFound();
             }
 
-            var productModel = await _context.ProductModel.FindAsync(id);
-            if (productModel == null)
+            var categoryModel = await _context.CategoryModel.FindAsync(id);
+            if (categoryModel == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id", productModel.CategoryId);
-            return View(productModel);
+            return View(categoryModel);
         }
 
-        // POST: Product/Edit/5
+        // POST: CategoryModels/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Price,Description,LastUpdateDate,CategoryId")] ProductModel productModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title")] CategoryModel categoryModel)
         {
-            if (id != productModel.Id)
+            if (id != categoryModel.Id)
             {
                 return NotFound();
             }
@@ -102,12 +96,12 @@ namespace Supermarket.Controllers
             {
                 try
                 {
-                    _context.Update(productModel);
+                    _context.Update(categoryModel);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductModelExists(productModel.Id))
+                    if (!CategoryModelExists(categoryModel.Id))
                     {
                         return NotFound();
                     }
@@ -118,11 +112,10 @@ namespace Supermarket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id", productModel.CategoryId);
-            return View(productModel);
+            return View(categoryModel);
         }
 
-        // GET: Product/Delete/5
+        // GET: CategoryModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,35 +123,34 @@ namespace Supermarket.Controllers
                 return NotFound();
             }
 
-            var productModel = await _context.ProductModel
-                .Include(p => p.Category)
+            var categoryModel = await _context.CategoryModel
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (productModel == null)
+            if (categoryModel == null)
             {
                 return NotFound();
             }
 
-            return View(productModel);
+            return View(categoryModel);
         }
 
-        // POST: Product/Delete/5
+        // POST: CategoryModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productModel = await _context.ProductModel.FindAsync(id);
-            if (productModel != null)
+            var categoryModel = await _context.CategoryModel.FindAsync(id);
+            if (categoryModel != null)
             {
-                _context.ProductModel.Remove(productModel);
+                _context.CategoryModel.Remove(categoryModel);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductModelExists(int id)
+        private bool CategoryModelExists(int id)
         {
-            return _context.ProductModel.Any(e => e.Id == id);
+            return _context.CategoryModel.Any(e => e.Id == id);
         }
     }
 }
