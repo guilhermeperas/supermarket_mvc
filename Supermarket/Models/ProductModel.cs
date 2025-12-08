@@ -10,6 +10,7 @@ namespace Supermarket.Models
         [Required]
         public string Title { get; set; }
         [Required]
+        [Range(1, 100)]
         public double Price { get; set; }
         [Required]
         [MaxLength(1000)]

@@ -48,7 +48,7 @@ namespace Supermarket.Controllers
         // GET: Product/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Title");
             return View();
         }
 
@@ -57,15 +57,18 @@ namespace Supermarket.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Price,Description,LastUpdateDate,CategoryId")] ProductModel productModel)
+        public async Task<IActionResult> Create([Bind("Id,Title,Price,Description,CategoryId")] ProductModel productModel)
         {
+            ModelState.Remove("Category");
+
             if (ModelState.IsValid)
             {
+                productModel.LastUpdateDate = DateTime.Now;
                 _context.Add(productModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id", productModel.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Title", productModel.CategoryId);
             return View(productModel);
         }
 
@@ -82,7 +85,7 @@ namespace Supermarket.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id", productModel.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Title", productModel.CategoryId);
             return View(productModel);
         }
 
@@ -91,17 +94,20 @@ namespace Supermarket.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Price,Description,LastUpdateDate,CategoryId")] ProductModel productModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Price,Description,CategoryId")] ProductModel productModel)
         {
             if (id != productModel.Id)
             {
                 return NotFound();
             }
 
+            ModelState.Remove("Category");
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    productModel.LastUpdateDate = DateTime.Now;
                     _context.Update(productModel);
                     await _context.SaveChangesAsync();
                 }
@@ -118,7 +124,7 @@ namespace Supermarket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Id", productModel.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.CategoryModel, "Id", "Title", productModel.CategoryId);
             return View(productModel);
         }
 
